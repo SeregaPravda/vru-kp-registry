@@ -15,13 +15,17 @@
     return cases.filter(c => c.status === key).length;
   }
 
+  let renderToken = 0;
+
   async function render(){
+    const token = ++renderToken;
     const grid = document.getElementById('dashStatGrid');
     grid.innerHTML = STAT_DEFS.map(() => '<div class="skeleton" style="height:76px"></div>').join('');
     document.getElementById('dashRecentCases').innerHTML = skeletonRows(5);
     document.getElementById('dashActivity').innerHTML = skeletonRows(4);
 
     await data.loadCases();
+    if(token !== renderToken) return;
     const cases = data.getCases();
 
     grid.innerHTML = STAT_DEFS.map(def => `
@@ -52,6 +56,7 @@
 
     const activityWrap = document.getElementById('dashActivity');
     const entries = await data.loadAudit(null);
+    if(token !== renderToken) return;
     if(!entries.length){
       activityWrap.innerHTML = '';
       activityWrap.appendChild(emptyState({title:'Журнал дій порожній', message:'Тут з’являться зміни статусів справ.', iconName:'info'}));

@@ -6,7 +6,8 @@
     if(data.isConfigured){
       await data.ensureAnonymousSession();
       await data.restoreRole();
-      data.subscribeRealtime(() => { data.loadCases(); });
+      const reload = window.KP.ui.debounce(() => data.loadCases(), 150);
+      data.subscribeRealtime(reload);
     }
     await data.loadCases();
   }
