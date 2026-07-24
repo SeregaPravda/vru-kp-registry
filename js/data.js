@@ -2,8 +2,8 @@
 window.KP = window.KP || {};
 
 (function(){
-  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+  const SUPABASE_URL = 'https://ihtztztpizmhxmenybwp.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_8ynB1SKJZAhNICkN5izT8A_C-bzchKf';
   const isConfigured = SUPABASE_URL.startsWith('http') && SUPABASE_ANON_KEY.length > 20;
   const supabase = (isConfigured && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
