@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Архів справ — Реєстр КП ВРУ</title>
+  <meta name="description" content="Архів завершених і відхилених справ реєстру КП ВРУ з фільтрацією та швидким переглядом основної інформації по провадженням.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232dd4bf'/%3E%3Cpath d='M14 20h26l16 16v14H14z' fill='none' stroke='%23052d29' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="site-header compact-header">
+    <div class="container nav-shell">
+      <a class="brand" href="./index.html"><span class="brand-mark"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18h24l16 16v12H12z"></path><path d="M36 18v16h16"></path><path d="M22 44h20"></path></svg></span><span><strong>Реєстр КП ВРУ</strong><small>Архів справ</small></span></a>
+      <nav class="main-nav"><a href="./index.html">Головна</a><a href="./registry.html">Реєстр</a><a href="./search.html">Пошук</a><a href="./guide.html">Регламент</a></nav>
+      <span class="status-pill"><i></i>Система активна</span>
+    </div>
+  </header>
+
+  <main class="workspace-page">
+    <div class="container workspace-shell">
+      <section class="workspace-intro">
+        <span class="eyebrow">Архівний модуль</span>
+        <h1>Завершені та відхилені провадження</h1>
+        <p>Тут зберігаються справи, що вже завершили свій рух у системі, із можливістю швидкого перегляду основних даних.</p>
+      </section>
+
+      <section class="panel-card">
+        <div class="panel-head"><h2>Архівний реєстр</h2><span id="archiveInfo">0 записів</span></div>
+        <div class="inline-toolbar">
+          <button class="pill-btn active" data-archive-filter="all">Усі архівні</button>
+          <button class="pill-btn" data-archive-filter="closed">Закрито</button>
+          <button class="pill-btn" data-archive-filter="rejected">Відхилено</button>
+        </div>
+        <div id="archiveList" class="records-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
