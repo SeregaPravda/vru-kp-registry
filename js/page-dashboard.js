@@ -21,8 +21,12 @@
     const token = ++renderToken;
     const grid = document.getElementById('dashStatGrid');
 
-    await data.loadCases();
-    if(token !== renderToken) return;
+    // Note: intentionally NOT calling data.loadCases() here. loadCases() always
+    // calls notifyDataChange(), which re-invokes every onDataChange listener -
+    // including this render function. Calling it from inside render() creates
+    // an infinite render -> load -> notify -> render loop. boot.js and the
+    // realtime subscription are responsible for keeping data.getCases() fresh;
+    // this function only reads the already-loaded cache.
     const cases = data.getCases();
 
     grid.innerHTML = STAT_DEFS.map(def => `
