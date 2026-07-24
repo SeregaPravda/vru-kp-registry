@@ -5,9 +5,8 @@
 
   const NAV_ITEMS = [
     {href:'./index.html', match:['index.html',''], label:'Огляд', iconName:'dashboard'},
-    {href:'./registry.html', match:['registry.html'], label:'Активні справи', iconName:'registry'},
-    {action:'create-case', label:'Створити КП', iconName:'create'},
-    {href:'./search.html', match:['search.html'], label:'Пошук', iconName:'search'},
+    {href:'./registry.html', match:['registry.html'], label:'Пошук КП', iconName:'search'},
+    {action:'create-case', label:'Створити КП', iconName:'create', cta:true},
     {href:'./archive.html', match:['archive.html'], label:'Архів', iconName:'archive'},
     {href:'./guide.html', match:['guide.html'], label:'Регламент', iconName:'guide'}
   ];
@@ -15,9 +14,8 @@
   const PAGE_META = {
     'index.html': {title:'Огляд', crumbs:['Огляд']},
     '': {title:'Огляд', crumbs:['Огляд']},
-    'registry.html': {title:'Активні справи', crumbs:['Реєстр','Активні справи']},
-    'search.html': {title:'Розширений пошук', crumbs:['Реєстр','Пошук']},
-    'archive.html': {title:'Архів', crumbs:['Реєстр','Архів']},
+    'registry.html': {title:'Пошук КП', crumbs:['Пошук КП']},
+    'archive.html': {title:'Архів', crumbs:['Архів']},
     'guide.html': {title:'Регламент', crumbs:['Регламент']}
   };
 
@@ -28,7 +26,7 @@
     const navHtml = NAV_ITEMS.map(item => {
       const isActive = item.match && item.match.includes(currentFile);
       if(item.action === 'create-case'){
-        return `<button type="button" class="sidebar-link" data-action="open-create-case">${icon[item.iconName]}<span>${item.label}</span></button>`;
+        return `<button type="button" class="sidebar-link ${item.cta ? 'is-cta' : ''}" data-action="open-create-case">${icon[item.iconName]}<span>${item.label}</span></button>`;
       }
       return `<a href="${item.href}" class="sidebar-link ${isActive ? 'is-active' : ''}">${icon[item.iconName]}<span>${item.label}</span></a>`;
     }).join('');
@@ -201,7 +199,7 @@
     topbar.querySelector('#globalSearchForm').addEventListener('submit', e => {
       e.preventDefault();
       const q = topbar.querySelector('#globalSearchInput').value.trim();
-      location.href = './search.html' + (q ? '?q=' + encodeURIComponent(q) : '');
+      location.href = './registry.html' + (q ? '?q=' + encodeURIComponent(q) : '');
     });
 
     /* delegated actions */

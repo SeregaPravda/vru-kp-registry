@@ -81,6 +81,23 @@ create table if not exists public.case_materials (
 );
 ```
 
+## 2.1. Коментарі до справи
+
+```sql
+create table if not exists public.case_comments (
+  id bigint generated always as identity primary key,
+  case_id bigint not null references public.cases(id) on delete cascade,
+  author text not null,
+  body text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.case_comments enable row level security;
+create policy "anyone reads comments" on public.case_comments for select using (true);
+create policy "logged-in staff comments" on public.case_comments
+  for insert with check (exists (select 1 from public.user_roles where user_id = auth.uid()));
+```
+
 ## 3. Історія дій — тепер по-справжньому в базі, не в пам'яті вкладки
 
 ```sql
@@ -257,8 +274,8 @@ Authentication → Providers → **Anonymous Sign-Ins** → Enable.
 
 ## 8. Realtime
 
-Table Editor → `cases`, `case_materials`, `audit_log` → увімкни **Realtime**
-для кожної.
+Table Editor → `cases`, `case_materials`, `audit_log`, `case_comments` → увімкни
+**Realtime** для кожної.
 
 ## 9. Ключі проєкту в `app.js`
 

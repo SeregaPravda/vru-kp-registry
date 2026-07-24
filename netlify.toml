@@ -8,7 +8,7 @@
 
 [[redirects]]
   from = "/search"
-  to = "/search.html"
+  to = "/registry.html"
   status = 200
 
 [[redirects]]

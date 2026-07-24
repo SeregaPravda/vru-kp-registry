@@ -25,12 +25,14 @@
             <button class="tab-btn" data-tab="history">Історія</button>
             <button class="tab-btn" data-tab="participants">Учасники</button>
             <button class="tab-btn" data-tab="decision">Рішення</button>
+            <button class="tab-btn" data-tab="comments">Коментарі</button>
           </div>
           <div class="tab-panel is-active" data-panel="overview" id="panelOverview"></div>
           <div class="tab-panel" data-panel="materials" id="panelMaterials"></div>
           <div class="tab-panel" data-panel="history" id="panelHistory"></div>
           <div class="tab-panel" data-panel="participants" id="panelParticipants"></div>
           <div class="tab-panel" data-panel="decision" id="panelDecision"></div>
+          <div class="tab-panel" data-panel="comments" id="panelComments"></div>
         </div>
       </div>
     </div>`);
@@ -133,6 +135,7 @@
     renderDecision(c);
     renderMaterials(c);
     renderHistory(c);
+    renderComments(c);
   }
 
   function renderOverview(c){
@@ -220,6 +223,35 @@
   }
 
   window.KP.ui.trapFocus(drawer, () => drawer.classList.contains('is-open'));
+
+  async function renderComments(c){
+    const panel = overlay.querySelector('#panelComments');
+    panel.innerHTML = window.KP.ui.skeletonRows(2);
+    const comments = await data.loadComments(c.rowId);
+    const listHtml = comments.length ? comments.map(cm => `
+      <div class="card card-pad" style="display:grid;gap:4px">
+        <div class="flex-between"><b style="font-size:12.5px">${data.escapeHtml(cm.author)}</b><span style="font-size:11px;color:var(--muted-dim)">${data.formatDate(cm.created_at)}</span></div>
+        <p style="font-size:13px">${data.escapeHtml(cm.body)}</p>
+      </div>`).join('') : `<p style="font-size:13px;color:var(--muted)">Коментарів ще немає.</p>`;
+
+    const user = data.getCurrentUser();
+    panel.innerHTML = `
+      <div style="display:grid;gap:10px">${listHtml}</div>
+      ${user ? `
+      <form id="addCommentForm" style="display:grid;gap:8px;margin-top:14px">
+        <textarea name="body" placeholder="Напиши коментар до цієї справи..." required style="min-height:64px"></textarea>
+        <button class="btn btn-secondary btn-sm" type="submit" style="justify-self:start">${icon.create}<span>Додати коментар</span></button>
+      </form>` : `<p style="font-size:12.5px;color:var(--muted-dim);margin-top:14px">Увійди в систему, щоб залишити коментар.</p>`}`;
+
+    const commentForm = panel.querySelector('#addCommentForm');
+    if(commentForm) commentForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const body = new FormData(commentForm).get('body').trim();
+      if(!body) return;
+      try{ await data.addComment(c.rowId, body); commentForm.reset(); renderComments(c); }
+      catch(err){ toast(err.message, 'error'); }
+    });
+  }
 
   document.addEventListener('app:open-case', async e => {
     const rowId = e.detail.rowId;

@@ -5,9 +5,6 @@
 
   const STAT_DEFS = [
     {key:'all', label:'Усього КП', iconName:'registry', acc:'acc-grey', href:'./registry.html'},
-    {key:'new', label:'Нові', iconName:'create', acc:'acc-blue', href:'./registry.html?status=new'},
-    {key:'review', label:'На перевірці', iconName:'eye', acc:'acc-amber', href:'./registry.html?status=review'},
-    {key:'opened', label:'Відкриті', iconName:'open', acc:'acc-purple', href:'./registry.html?status=opened'},
     {key:'court', label:'У суді', iconName:'registry', acc:'acc-orange', href:'./registry.html?status=court'},
     {key:'closed', label:'Закриті', iconName:'check', acc:'acc-green', href:'./archive.html?status=closed'},
     {key:'rejected', label:'Відхилені', iconName:'x', acc:'acc-red', href:'./archive.html?status=rejected'}
@@ -76,6 +73,13 @@
   render();
 
   const strip = document.getElementById('dashProcessStrip');
-  const steps = ['Реєстрація','Перевірка','Відкриття','Суд','Рішення','Архів'];
-  strip.innerHTML = steps.map((s,i) => `<div class="process-step"><span class="dot"></span><span>${s}</span></div>${i < steps.length-1 ? '<div class="process-line"></div>' : ''}`).join('');
+  const steps = [
+    {label:'Реєстрація', color:'#3B82F6'},
+    {label:'Перевірка', color:'#F59E0B'},
+    {label:'Відкриття', color:'#6D5DFB'},
+    {label:'Суд', color:'#F97316'},
+    {label:'Рішення', color:'#22C55E'},
+    {label:'Архів', color:'#94A3B8'}
+  ];
+  strip.innerHTML = steps.map((s,i) => `<div class="process-step"><span class="dot" style="background:${s.color};box-shadow:0 0 0 3px ${s.color}22"></span><span>${s.label}</span></div>${i < steps.length-1 ? '<div class="process-line"></div>' : ''}`).join('');
 })();

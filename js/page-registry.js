@@ -3,7 +3,6 @@
   const { icon, toast, emptyState, statusBadge, attachKebab, debounce } = window.KP.ui;
   const data = window.KP.data;
 
-  const ACTIVE_STATUSES = ['new','review','opened','court'];
   const SORT_LABEL = {createdAt:'Дата створення', updatedAt:'Остання зміна', status:'Статус', article:'Стаття', author:'Автор', suspect:'Підозрюваний'};
 
   const params = new URLSearchParams(location.search);
@@ -12,6 +11,7 @@
     status: params.get('status') || 'all',
     article: '',
     author: '',
+    suspect: '',
     responsible: '',
     dateFrom: '',
     dateTo: '',
@@ -25,11 +25,12 @@
 
   function filteredSorted(){
     const q = state.q.trim().toLowerCase();
-    let rows = data.getCases().filter(c => ACTIVE_STATUSES.includes(c.status));
+    let rows = data.getCases().slice();
     if(state.status !== 'all') rows = rows.filter(c => c.status === state.status);
     if(q) rows = rows.filter(c => `${c.id} ${c.author} ${c.suspect} ${c.article} ${c.shortDescription} ${c.responsible||''}`.toLowerCase().includes(q));
     if(state.article.trim()) rows = rows.filter(c => c.article.toLowerCase().includes(state.article.trim().toLowerCase()));
     if(state.author.trim()) rows = rows.filter(c => c.author.toLowerCase().includes(state.author.trim().toLowerCase()));
+    if(state.suspect.trim()) rows = rows.filter(c => c.suspect.toLowerCase().includes(state.suspect.trim().toLowerCase()));
     if(state.responsible.trim()) rows = rows.filter(c => (c.responsible||'').toLowerCase().includes(state.responsible.trim().toLowerCase()));
     if(state.dateFrom) rows = rows.filter(c => new Date(c.createdAt) >= new Date(state.dateFrom));
     if(state.dateTo) rows = rows.filter(c => new Date(c.createdAt) <= new Date(state.dateTo + 'T23:59:59'));
@@ -50,6 +51,7 @@
     if(state.status !== 'all') chips.push({key:'status', label:`Статус: ${data.STATUS_LABEL[state.status]}`});
     if(state.article) chips.push({key:'article', label:`Стаття: ${state.article}`});
     if(state.author) chips.push({key:'author', label:`Автор: ${state.author}`});
+    if(state.suspect) chips.push({key:'suspect', label:`Підозрюваний: ${state.suspect}`});
     if(state.responsible) chips.push({key:'responsible', label:`Відповідальний: ${state.responsible}`});
     if(state.dateFrom || state.dateTo) chips.push({key:'date', label:`Період: ${state.dateFrom||'…'} — ${state.dateTo||'…'}`});
     return chips;
@@ -64,8 +66,8 @@
     root.innerHTML = `
       <div class="flex-between" style="flex-wrap:wrap;gap:12px">
         <div>
-          <h1 style="font-size:22px">Активні кримінальні провадження</h1>
-          <p style="color:var(--muted);margin-top:4px">Робоча таблиця реєстру — фільтруй, сортуй і відкривай справи для роботи.</p>
+          <h1 style="font-size:22px">Пошук КП</h1>
+          <p style="color:var(--muted);margin-top:4px">Єдиний реєстр і пошук по всіх справах — фільтруй, сортуй і відкривай для роботи.</p>
         </div>
         <button class="btn btn-primary" type="button" data-action="open-create-case">${icon.create}<span>Створити КП</span></button>
       </div>
@@ -75,13 +77,14 @@
           <div class="toolbar-search">${icon.search}<input type="text" id="fQuery" placeholder="Пошук за ID, автором, підозрюваним, статтею, описом..." value="${data.escapeHtml(state.q)}"></div>
           <select id="fStatus">
             <option value="all">Усі статуси</option>
-            ${ACTIVE_STATUSES.map(s => `<option value="${s}" ${state.status===s?'selected':''}>${data.STATUS_LABEL[s]}</option>`).join('')}
+            ${data.STATUS_ORDER.map(s => `<option value="${s}" ${state.status===s?'selected':''}>${data.STATUS_LABEL[s]}</option>`).join('')}
           </select>
           <button class="btn btn-secondary btn-sm" id="btnReset" type="button">Скинути фільтри</button>
         </div>
         <div class="filters-row">
           <input type="text" id="fArticle" placeholder="Стаття ККУ" value="${data.escapeHtml(state.article)}">
           <input type="text" id="fAuthor" placeholder="Автор" value="${data.escapeHtml(state.author)}">
+          <input type="text" id="fSuspect" placeholder="Підозрюваний" value="${data.escapeHtml(state.suspect)}">
           <input type="text" id="fResponsible" placeholder="Відповідальний" value="${data.escapeHtml(state.responsible)}">
           <input type="date" id="fDateFrom" value="${state.dateFrom}" aria-label="Дата від">
           <input type="date" id="fDateTo" value="${state.dateTo}" aria-label="Дата до">
@@ -129,7 +132,7 @@
     const cardList = root.querySelector('#cardList');
     if(!pageRows.length){
       const isFiltered = q_active();
-      tbody.innerHTML = `<tr><td colspan="10"><div class="state-block">${icon.empty}<h3>${isFiltered ? 'За вибраними параметрами нічого не знайдено' : 'Активних проваджень поки немає'}</h3><p>${isFiltered ? '' : 'Зареєструй перше кримінальне провадження.'}</p><button class="btn btn-primary btn-sm" id="emptyAction">${isFiltered ? 'Скинути фільтри' : 'Створити перше КП'}</button></div></td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="10"><div class="state-block">${icon.empty}<h3>${isFiltered ? 'За вибраними параметрами нічого не знайдено' : 'Справ у системі поки немає'}</h3><p>${isFiltered ? '' : 'Зареєструй перше кримінальне провадження.'}</p><button class="btn btn-primary btn-sm" id="emptyAction">${isFiltered ? 'Скинути фільтри' : 'Створити перше КП'}</button></div></td></tr>`;
       cardList.innerHTML = '';
       root.querySelector('#emptyAction').addEventListener('click', () => {
         if(isFiltered) resetFilters(); else document.dispatchEvent(new CustomEvent('app:open-create-case'));
@@ -210,7 +213,7 @@
   }
 
   function resetFilters(){
-    Object.assign(state, {q:'', status:'all', article:'', author:'', responsible:'', dateFrom:'', dateTo:'', page:1});
+    Object.assign(state, {q:'', status:'all', article:'', author:'', suspect:'', responsible:'', dateFrom:'', dateTo:'', page:1});
     render();
   }
 
@@ -219,6 +222,7 @@
     root.querySelector('#fStatus').addEventListener('change', e => { state.status = e.target.value; state.page=1; render(); });
     root.querySelector('#fArticle').addEventListener('input', debounce(e => { state.article = e.target.value; state.page=1; render(); }, 300));
     root.querySelector('#fAuthor').addEventListener('input', debounce(e => { state.author = e.target.value; state.page=1; render(); }, 300));
+    root.querySelector('#fSuspect').addEventListener('input', debounce(e => { state.suspect = e.target.value; state.page=1; render(); }, 300));
     root.querySelector('#fResponsible').addEventListener('input', debounce(e => { state.responsible = e.target.value; state.page=1; render(); }, 300));
     root.querySelector('#fDateFrom').addEventListener('change', e => { state.dateFrom = e.target.value; state.page=1; render(); });
     root.querySelector('#fDateTo').addEventListener('change', e => { state.dateTo = e.target.value; state.page=1; render(); });

@@ -193,6 +193,22 @@ window.KP = window.KP || {};
     return data || [];
   }
 
+  async function loadComments(caseRowId){
+    if(!supabase) return [];
+    const { data, error } = await supabase.from('case_comments').select('*').eq('case_id', caseRowId).order('created_at', {ascending:true});
+    if(error){ console.error('loadComments error:', error.message); return []; }
+    return data || [];
+  }
+
+  async function addComment(rowId, body){
+    if(!supabase) throw new Error('Supabase не підключено.');
+    if(!currentUser) throw new Error('Потрібно увійти в систему, щоб залишити коментар.');
+    const { error } = await supabase.from('case_comments').insert({
+      case_id: rowId, author: currentUser.displayName, body
+    });
+    if(error) throw new Error(error.message);
+  }
+
   async function createCase(payload){
     if(!supabase) throw new Error('Supabase не підключено. Дивись SUPABASE.md.');
     const { data, error } = await supabase.from('cases').insert({
@@ -246,6 +262,7 @@ window.KP = window.KP || {};
       .on('postgres_changes', {event:'*', schema:'public', table:'cases'}, onChange)
       .on('postgres_changes', {event:'*', schema:'public', table:'case_materials'}, onChange)
       .on('postgres_changes', {event:'*', schema:'public', table:'audit_log'}, onChange)
+      .on('postgres_changes', {event:'*', schema:'public', table:'case_comments'}, onChange)
       .subscribe();
     return () => supabase.removeChannel(channel);
   }
@@ -258,8 +275,8 @@ window.KP = window.KP || {};
     onAuthChange, ensureAnonymousSession, restoreRole, login, logout, hasPermission,
     getCurrentUser: () => currentUser,
     getCases: () => cases,
-    onDataChange, loadCases, loadAudit, loadMaterials,
-    createCase, updateCaseStatus, assignResponsible, setDecision, addMaterial,
+    onDataChange, loadCases, loadAudit, loadMaterials, loadComments,
+    createCase, updateCaseStatus, assignResponsible, setDecision, addMaterial, addComment,
     subscribeRealtime
   };
 })();
