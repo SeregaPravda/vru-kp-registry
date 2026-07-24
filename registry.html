@@ -3,82 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Реєстр КП ВРУ — Активні провадження</title>
-  <meta name="description" content="Робоча зона реєстру КП ВРУ: активні справи, форма створення провадження, статуси, журнал дій та фільтрація даних.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232dd4bf'/%3E%3Cpath d='M14 20h26l16 16v14H14z' fill='none' stroke='%23052d29' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://api.fontshare.com">
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <title>Активні справи — Реєстр КП ВРУ</title>
+  <meta name="description" content="Робоча таблиця активних кримінальних проваджень: пошук, фільтри, сортування, статуси.">
+  <meta name="theme-color" content="#070D1A">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236D5DFB'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='24' font-weight='700' fill='white' text-anchor='middle'%3EКП%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <header class="site-header compact-header">
-    <div class="container nav-shell">
-      <a class="brand" href="./index.html"><span class="brand-mark"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18h24l16 16v12H12z"></path><path d="M36 18v16h16"></path><path d="M22 44h20"></path></svg></span><span><strong>Реєстр КП ВРУ</strong><small>Активні провадження</small></span></a>
-      <nav class="main-nav"><a href="./index.html">Головна</a><a href="./search.html">Пошук</a><a href="./archive.html">Архів</a><a href="./guide.html">Регламент</a></nav>
-      <span class="status-pill"><i></i>Система активна</span>
-    </div>
-  </header>
-
-  <main class="workspace-page">
-    <div class="container workspace-shell">
-      <section class="workspace-intro">
-        <span class="eyebrow">Робоча зона</span>
-        <h1>Активні кримінальні провадження</h1>
-        <p>Тут знаходяться форма подання КП, активні записи, статуси розгляду та журнал дій по системі.</p>
-      </section>
-
-      <section class="stats-grid">
-        <article class="stat-card reveal reveal-1"><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/><path d="M9 3v6h6"/><path d="M21 3l-9 9"/><path d="M21 3h-6"/><path d="M21 3v6"/></svg></span><span>Усього КП</span><strong id="statTotal">0</strong></article>
-        <article class="stat-card reveal reveal-2"><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span><span>Нові</span><strong id="statNew">0</strong></article>
-        <article class="stat-card reveal reveal-3"><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M4 10h16"/><path d="M6 10l-2 6h6l-2-6"/><path d="M18 10l-2 6h6l-2-6"/><path d="M4 21h16"/><path d="M9 21V13h6v8"/></svg></span><span>Відкриті / в суді</span><strong id="statCourt">0</strong></article>
-        <article class="stat-card reveal reveal-4"><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg></span><span>Архів</span><strong id="statArchive">0</strong></article>
-      </section>
-
-      <section class="workspace-grid">
-        <article class="panel-card">
-          <div class="panel-head"><h2>Нове КП</h2><span>Створення запису</span></div>
-          <form id="caseForm" class="form-stack">
-            <label><span>Автор КП</span><input id="author" type="text" placeholder="Det. Pravda / ID 542" required></label>
-            <label><span>Підозрюваний</span><input id="suspect" type="text" placeholder="Nick_Name / ID 311" required></label>
-            <label><span>Стаття ККУ</span>
-              <div class="article-picker" data-article-picker>
-                <button type="button" class="article-picker-trigger" id="articlePickerTrigger" aria-expanded="false" aria-controls="articlePickerPanel">
-                  <span class="article-picker-label">Оберіть статтю або скористайтесь пошуком</span>
-                  <span class="article-picker-arrow">⌄</span>
-                </button>
-                <div class="article-picker-panel" id="articlePickerPanel" hidden>
-                  <input id="articleSearch" class="article-picker-search" type="text" autocomplete="off" placeholder="Пошук за номером або назвою статті">
-                  <div class="article-picker-list" id="articlePickerList"></div>
-                </div>
-                <input id="article" type="hidden" required>
-              </div>
-            </label>
-            <label><span>Матеріали справи / примітка</span><input id="evidence" type="text" placeholder="Наприклад: Discord #evidence, bodycam 01:42, Telegram, Imgur або короткий опис" required></label>
-            <label><span>Короткий опис</span><textarea id="summary" placeholder="Що сталося, де, коли і хто був присутній" required></textarea></label>
-            <button class="btn btn-primary" type="submit">Зареєструвати КП</button>
-          </form>
-        </article>
-
-        <article class="panel-card wide-panel">
-          <div class="panel-head"><h2>Список активних справ</h2><span id="resultInfo">0 записів</span></div>
-          <div class="inline-toolbar">
-            <button class="pill-btn active" data-registry-filter="all">Усі</button>
-            <button class="pill-btn" data-registry-filter="new">Нові</button>
-            <button class="pill-btn" data-registry-filter="opened">Відкриті</button>
-            <button class="pill-btn" data-registry-filter="court">В суді</button>
-          </div>
-          <div id="registryList" class="records-list"></div>
-        </article>
-      </section>
-
-      <section class="panel-card">
-        <div class="panel-head"><h2>Журнал дій</h2><span>Останні зміни</span></div>
-        <div id="auditLog" class="audit-list"></div>
-      </section>
-    </div>
-  </main>
+  <main class="page-content" data-page="registry"></main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js"></script>
+  <script src="./js/data.js"></script>
+  <script src="./js/ui.js"></script>
+  <script src="./js/shell.js"></script>
+  <script src="./js/create-case.js"></script>
+  <script src="./js/case-drawer.js"></script>
+  <script src="./js/page-registry.js"></script>
+  <script src="./js/boot.js"></script>
 </body>
 </html>

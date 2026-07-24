@@ -3,127 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Реєстр КП ВРУ — Судова система Ukraine GTA</title>
-  <meta name="description" content="Офіційний веб-інтерфейс реєстру кримінальних проваджень ВРУ для Ukraine GTA: подання КП, контроль руху справ, архів і пошук по реєстру.">
-  <meta name="keywords" content="реєстр КП, ВРУ, Ukraine GTA, кримінальні провадження, суд, архів справ, ККУ, калькулятор КП">
-  <meta property="og:title" content="Реєстр КП ВРУ">
-  <meta property="og:description" content="Судова операційна система для реєстру кримінальних проваджень, пошуку, архіву та контролю руху справ.">
-  <meta property="og:type" content="website">
-  <meta name="theme-color" content="#080b10">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232dd4bf'/%3E%3Cpath d='M14 20h26l16 16v14H14z' fill='none' stroke='%23052d29' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://api.fontshare.com">
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <title>Огляд — Реєстр КП ВРУ</title>
+  <meta name="description" content="Єдина система реєстрації, розгляду та контролю кримінальних проваджень ВРУ.">
+  <meta name="theme-color" content="#070D1A">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236D5DFB'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='24' font-weight='700' fill='white' text-anchor='middle'%3EКП%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container nav-shell">
-      <a class="brand" href="./index.html">
-        <span class="brand-mark">
-          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 18h24l16 16v12H12z"></path><path d="M36 18v16h16"></path><path d="M22 44h20"></path>
-          </svg>
-        </span>
-        <span>
-          <strong>Реєстр КП ВРУ</strong>
-          <small>Судова система Ukraine GTA</small>
-        </span>
-      </a>
-      <nav class="main-nav">
-        <a href="./registry.html">Реєстр</a>
-        <a href="./search.html">Пошук</a>
-        <a href="./archive.html">Архів</a>
-        <a href="./guide.html">Регламент</a>
-      </nav>
-      <span class="status-pill"><i></i>Система активна</span>
+  <main class="page-content" data-page="dashboard">
+    <div class="flex-between" style="flex-wrap:wrap;gap:12px">
+      <div>
+        <h1 style="font-size:26px">Реєстр кримінальних проваджень ВРУ</h1>
+        <p style="color:var(--muted);margin-top:4px">Єдина система реєстрації, розгляду та контролю кримінальних проваджень</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary" type="button" data-action="open-create-case">Створити провадження</button>
+        <a class="btn btn-secondary" href="./registry.html">Перейти до реєстру</a>
+      </div>
     </div>
-  </header>
 
-  <main>
-    <section class="hero-block">
-      <div class="container hero-grid">
-        <div>
-          <span class="eyebrow">Єдиний реєстр кримінальних проваджень</span>
-          <h1>Реєстр <span class="accent-text">кримінальних проваджень</span> ВРУ</h1>
-          <p class="lead">Подання КП, контроль розгляду, пошук по справах, архів рішень і зручна робоча зона для слідчих, прокурорів та суддів в одному продукті.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="./registry.html">Перейти до реєстру</a>
-            <a class="btn btn-secondary" href="./search.html">Пошук і фільтри</a>
-          </div>
-        </div>
-        <div class="hero-card">
-          <div class="dashboard-preview">
-            <div class="preview-head">
-              <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
-              <span class="tag">registry.sys</span>
-            </div>
-            <div class="preview-donut-row">
-              <div class="donut" id="homeDonut" style="--p:70"></div>
-              <div class="donut-legend">
-                <div><i style="background:var(--accent)"></i>Активні <b id="homeActivePreview">0</b></div>
-                <div><i style="background:rgba(255,255,255,.14)"></i>Архів <b id="homeArchivePreview">0</b></div>
-              </div>
-            </div>
-            <div class="preview-stats" id="homePreviewStats">
-              <div><b id="homeTotalPreview">10</b><span>Усього КП</span></div>
-            </div>
-            <div class="preview-list" id="homePreviewList"></div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div class="stat-grid" id="dashStatGrid"></div>
 
-    <section class="section-block">
-      <div class="container">
-        <div class="section-heading">
-          <span class="eyebrow">Жива статистика</span>
-          <h2>Стан реєстру в одному екрані</h2>
-        </div>
-        <div class="home-stats-layout">
-          <article class="stat-card reveal reveal-1"><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/><path d="M9 3v6h6"/><path d="M21 3l-9 9"/><path d="M21 3h-6"/><path d="M21 3v6"/></svg></span><span>Усього КП у системі</span><strong id="homeTotalStat">10</strong></article>
-          <article class="stat-card reveal reveal-2"><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span><span>Активні провадження</span><strong id="homeActiveStat">7</strong></article>
-          <article class="stat-card reveal reveal-3"><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg></span><span>Архівні записи</span><strong id="homeArchiveStat">3</strong></article>
-          <article class="stat-card reveal reveal-4"><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M4 10h16"/><path d="M6 10l-2 6h6l-2-6"/><path d="M18 10l-2 6h6l-2-6"/><path d="M4 21h16"/><path d="M9 21V13h6v8"/></svg></span><span>В суді зараз</span><strong id="homeCourtStat">2</strong></article>
-        </div>
-        <article class="stat-card mini-sparkline-card reveal reveal-4">
-          <div class="mini-sparkline-head"><strong>Динаміка реєстрації КП</strong><span>за порядком надходження</span></div>
-          <div class="mini-sparkline" id="homeSparkline"></div>
-        </article>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px" class="dash-grid">
+      <div class="card">
+        <div class="card-head"><h2>Останні провадження</h2><span class="card-head-sub">до 7 останніх справ</span></div>
+        <div id="dashRecentCases"></div>
       </div>
-    </section>
+      <div class="card">
+        <div class="card-head"><h2>Останні дії</h2></div>
+        <div id="dashActivity" style="padding:0 18px"></div>
+      </div>
+    </div>
 
-    <section class="section-block alt-surface">
-      <div class="container">
-        <div class="section-heading">
-          <span class="eyebrow">Сценарій роботи</span>
-          <h2>Як рухається справа в системі</h2>
-        </div>
-        <div class="three-grid">
-          <article class="info-card reveal reveal-1"><strong><span class="num">1</span>Реєстрація</strong><p>Слідчий або уповноважена особа створює КП, додає статтю, опис та посилання на докази.</p></article>
-          <article class="info-card reveal reveal-2"><strong><span class="num">2</span>Розгляд</strong><p>Прокурор або суддя відкриває провадження, переглядає матеріали та переводить його в потрібний статус.</p></article>
-          <article class="info-card reveal reveal-3"><strong><span class="num">3</span>Завершення</strong><p>Після рішення справа потрапляє в архів, а історія дій зберігається для контролю та звітності.</p></article>
-        </div>
-      </div>
-    </section>
+    <div class="card card-pad">
+      <div class="card-head" style="padding:0 0 14px;border:none"><h2>Рух справ у системі</h2></div>
+      <div class="process-strip" id="dashProcessStrip"></div>
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-shell">
-      <div>
-        <strong>Реєстр КП ВРУ</strong>
-        <p>Статичний фронтенд-пакет для подальшого бойового запуску.</p>
-        <p class="footer-tag">v1.1 · Ukraine GTA</p>
-      </div>
-      <nav>
-        <a href="./registry.html">Реєстр</a>
-        <a href="./search.html">Пошук</a>
-        <a href="./archive.html">Архів</a>
-        <a href="./guide.html">Регламент</a>
-      </nav>
-    </div>
-  </footer>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./app.js"></script>
+  <script src="./js/data.js"></script>
+  <script src="./js/ui.js"></script>
+  <script src="./js/shell.js"></script>
+  <script src="./js/create-case.js"></script>
+  <script src="./js/case-drawer.js"></script>
+  <script src="./js/page-dashboard.js"></script>
+  <script src="./js/boot.js"></script>
 </body>
 </html>

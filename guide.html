@@ -3,37 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Регламент системи — Реєстр КП ВРУ</title>
-  <meta name="description" content="Регламент роботи реєстру кримінальних проваджень ВРУ: порядок подання КП, ролі учасників, рух справ і архівування.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232dd4bf'/%3E%3Cpath d='M14 20h26l16 16v14H14z' fill='none' stroke='%23052d29' stroke-width='4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://api.fontshare.com">
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <title>Регламент — Реєстр КП ВРУ</title>
+  <meta name="description" content="Регламент роботи реєстру: ролі, дозволені дії та рух справи в системі.">
+  <meta name="theme-color" content="#070D1A">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236D5DFB'/%3E%3Ctext x='32' y='42' font-family='Arial' font-size='24' font-weight='700' fill='white' text-anchor='middle'%3EКП%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <header class="site-header compact-header">
-    <div class="container nav-shell">
-      <a class="brand" href="./index.html"><span class="brand-mark"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18h24l16 16v12H12z"></path><path d="M36 18v16h16"></path><path d="M22 44h20"></path></svg></span><span><strong>Реєстр КП ВРУ</strong><small>Регламент</small></span></a>
-      <nav class="main-nav"><a href="./index.html">Головна</a><a href="./registry.html">Реєстр</a><a href="./search.html">Пошук</a><a href="./archive.html">Архів</a></nav>
-      <span class="status-pill"><i></i>Система активна</span>
+  <main class="page-content" data-page="guide">
+    <div><h1 style="font-size:22px">Регламент системи</h1><p style="color:var(--muted);margin-top:4px">Ролі, дозволені дії та порядок руху кримінального провадження.</p></div>
+
+    <div class="card card-pad">
+      <div class="card-head" style="padding:0 0 14px;border:none"><h2>Рух справи</h2></div>
+      <div class="process-strip">
+        <div class="process-step"><span class="dot"></span><span>Нове</span></div>
+        <div class="process-line"></div>
+        <div class="process-step"><span class="dot"></span><span>На перевірці</span></div>
+        <div class="process-line"></div>
+        <div class="process-step"><span class="dot"></span><span>Відкрито</span></div>
+        <div class="process-line"></div>
+        <div class="process-step"><span class="dot"></span><span>У суді</span></div>
+        <div class="process-line"></div>
+        <div class="process-step"><span class="dot"></span><span>Закрито / Відхилено</span></div>
+      </div>
     </div>
-  </header>
 
-  <main class="workspace-page">
-    <div class="container workspace-shell">
-      <section class="workspace-intro">
-        <span class="eyebrow">Регламент системи</span>
-        <h1>Порядок роботи з реєстром КП</h1>
-        <p>Цей розділ пояснює ролі, етапи руху справ і логіку використання реєстру в рамках роботи ВРУ на сервері.</p>
-      </section>
+    <div class="role-grid">
+      <article class="role-card">
+        <span class="role-stage">Етап: подання</span>
+        <h3>Слідчий / автор</h3>
+        <div class="role-list">
+          <div class="can">✓ Реєструє нове КП</div>
+          <div class="can">✓ Додає матеріали до власних справ</div>
+          <div class="cannot">✗ Не змінює статус розгляду</div>
+          <div class="cannot">✗ Не закриває справу</div>
+        </div>
+      </article>
+      <article class="role-card">
+        <span class="role-stage">Етап: перевірка</span>
+        <h3>Прокурор</h3>
+        <div class="role-list">
+          <div class="can">✓ Бере КП на перевірку, відкриває провадження</div>
+          <div class="can">✓ Відхиляє необґрунтовані справи</div>
+          <div class="can">✓ Призначає відповідального</div>
+          <div class="cannot">✗ Не передає справу до суду</div>
+        </div>
+      </article>
+      <article class="role-card">
+        <span class="role-stage">Етап: розгляд</span>
+        <h3>Суддя</h3>
+        <div class="role-list">
+          <div class="can">✓ Передає відкриту справу до суду</div>
+          <div class="can">✓ Виносить рішення — закриває або відхиляє</div>
+          <div class="can">✓ Призначає відповідального</div>
+          <div class="cannot">✗ Не реєструє нові КП</div>
+        </div>
+      </article>
+      <article class="role-card">
+        <span class="role-stage">Контроль системи</span>
+        <h3>Адміністратор</h3>
+        <div class="role-list">
+          <div class="can">✓ Усі дії слідчого, прокурора та судді</div>
+          <div class="can">✓ Видаляє помилково створені справи</div>
+          <div class="can">✓ Відновлює архівні провадження</div>
+        </div>
+      </article>
+    </div>
 
-      <section class="guide-grid">
-        <article class="panel-card reveal reveal-1"><div class="panel-head"><h2>1. Подання КП</h2><span>Слідчий / автор</span></div><p>Автор створює запис, обирає статтю, додає опис ситуації, посилання на докази та формує стартове провадження.</p></article>
-        <article class="panel-card reveal reveal-2"><div class="panel-head"><h2>2. Перевірка</h2><span>Прокурор</span></div><p>Прокурор перевіряє достатність матеріалів, відкриває справу та переводить її в робочий процес.</p></article>
-        <article class="panel-card reveal reveal-3"><div class="panel-head"><h2>3. Розгляд</h2><span>Суддя</span></div><p>Суддя приймає справу до розгляду, змінює статус на “В суді” та після рішення переводить її в завершений стан.</p></article>
-        <article class="panel-card reveal reveal-4"><div class="panel-head"><h2>4. Архів</h2><span>Система</span></div><p>Закриті та відхилені справи відображаються в архівному модулі для історії, контролю і подальшого пошуку.</p></article>
-      </section>
+    <div class="card card-pad">
+      <div class="card-head" style="padding:0 0 14px;border:none"><h2>Статуси</h2></div>
+      <div style="display:grid;gap:10px">
+        <div class="flex-between"><span>Нове</span><span style="color:var(--muted);font-size:12.5px">Справу щойно зареєстровано слідчим</span></div>
+        <div class="flex-between"><span>На перевірці</span><span style="color:var(--muted);font-size:12.5px">Прокурор перевіряє матеріали</span></div>
+        <div class="flex-between"><span>Відкрито</span><span style="color:var(--muted);font-size:12.5px">Провадження офіційно відкрито</span></div>
+        <div class="flex-between"><span>У суді</span><span style="color:var(--muted);font-size:12.5px">Справу передано на розгляд судді</span></div>
+        <div class="flex-between"><span>Закрито</span><span style="color:var(--muted);font-size:12.5px">Рішення винесено, справа в архіві</span></div>
+        <div class="flex-between"><span>Відхилено</span><span style="color:var(--muted);font-size:12.5px">Провадження відхилено, справа в архіві</span></div>
+      </div>
     </div>
   </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/data.js"></script>
+  <script src="./js/ui.js"></script>
+  <script src="./js/shell.js"></script>
+  <script src="./js/create-case.js"></script>
+  <script src="./js/case-drawer.js"></script>
+  <script src="./js/boot.js"></script>
 </body>
 </html>
