@@ -193,9 +193,29 @@ insert into public.access_codes (code_hash, role, display_name, permissions) val
   (crypt('ТВІЙ_КОД_АДМІНА', gen_salt('bf')), 'admin', 'Адміністратор', array['register','review','court','decide','assign','edit','delete','archive_restore']);
 ```
 
-## 5. Тригер, що сам пише журнал дій
+## 5. Тригери: updated_at і журнал дій
+
+Два окремі тригери, бо в них різний час спрацювання: `updated_at`
+виставляється ДО запису рядка (BEFORE), а журнал дій пишеться ПІСЛЯ
+(AFTER) — інакше `audit_log.case_id` посилається на рядок `cases`,
+якого фізично ще не існує, і foreign key падає з помилкою.
 
 ```sql
+create or replace function public.set_case_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_set_case_updated_at on public.cases;
+create trigger trg_set_case_updated_at
+  before insert or update on public.cases
+  for each row execute function public.set_case_updated_at();
+
 create or replace function public.log_case_change()
 returns trigger
 language plpgsql
@@ -210,14 +230,13 @@ begin
     insert into public.audit_log (case_id, actor, action, from_status, to_status, detail)
     values (new.id, coalesce(new.responsible, 'Система'), 'status_change', old.status, new.status, null);
   end if;
-  new.updated_at = now();
   return new;
 end;
 $$;
 
 drop trigger if exists trg_log_case_change on public.cases;
 create trigger trg_log_case_change
-  before insert or update on public.cases
+  after insert or update on public.cases
   for each row execute function public.log_case_change();
 ```
 
