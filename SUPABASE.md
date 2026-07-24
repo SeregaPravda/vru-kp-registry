@@ -119,6 +119,8 @@ create table if not exists public.audit_log (
 ## 4. Коди доступу та ролі — серверна перевірка
 
 ```sql
+-- Supabase зазвичай ставить pgcrypto у схему `extensions`, не `public` —
+-- тому нижче в redeem_access_code() search_path включає обидві схеми.
 create extension if not exists pgcrypto;
 
 create table if not exists public.access_codes (
@@ -148,7 +150,7 @@ create or replace function public.redeem_access_code(p_code text)
 returns jsonb
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   match_row public.access_codes%rowtype;
