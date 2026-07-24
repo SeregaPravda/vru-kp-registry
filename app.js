@@ -199,6 +199,7 @@
           <span class="record-badge ${badgeClass(item.status)}"><i></i>${statusLabel(item.status)}</span>
         </div>
         <div class="record-article">${escapeHtml(item.article)}</div>
+        ${statusStepper(item.status)}
         <div class="record-meta"><span><b>Автор:</b> ${escapeHtml(item.author)}</span><span><b>Підозрюваний:</b> ${escapeHtml(item.suspect)}</span></div>
         <div class="record-meta"><span><b>Створено:</b> ${escapeHtml(item.createdAt)}</span><span><b>Матеріали:</b> ${renderEvidence(item.evidence)}</span></div>
         <p>${escapeHtml(item.summary)}</p>
@@ -211,6 +212,34 @@
 
   function emptyState(text){
     return `<div class="empty-state">${icons.empty}<span>${escapeHtml(text)}</span></div>`;
+  }
+
+  const stepOrder = ['new','opened','court','closed'];
+  const stepTitles = {new:'Нове', opened:'Відкрито', court:'В суді', closed:'Закрито'};
+
+  function statusStepper(status){
+    if(status === 'rejected'){
+      return `<div class="status-stepper is-rejected">${stepOrder.map(() => `<span class="step is-filled" title="Відхилено"></span>`).join('')}</div>`;
+    }
+    const idx = stepOrder.indexOf(status);
+    return `<div class="status-stepper">${stepOrder.map((s,i) => `<span class="step ${i<=idx?'is-filled':''}" title="${stepTitles[s]}"></span>`).join('')}</div>`;
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function animateCount(el, target){
+    if(!el) return;
+    const from = parseInt(el.textContent, 10) || 0;
+    if(from === target || reduceMotion){ el.textContent = target; return; }
+    const duration = 700;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(from + (target - from) * eased);
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
   }
 
   function totals(){
@@ -258,13 +287,13 @@
     const totalEl = document.getElementById('homeTotalStat');
     if(!totalEl) return;
     const stats = totals();
-    document.getElementById('homeTotalStat').textContent = stats.total;
-    document.getElementById('homeActiveStat').textContent = stats.active;
-    document.getElementById('homeArchiveStat').textContent = stats.archive;
-    document.getElementById('homeCourtStat').textContent = stats.court;
-    document.getElementById('homeTotalPreview').textContent = stats.total;
-    document.getElementById('homeActivePreview').textContent = stats.active;
-    document.getElementById('homeArchivePreview').textContent = stats.archive;
+    animateCount(document.getElementById('homeTotalStat'), stats.total);
+    animateCount(document.getElementById('homeActiveStat'), stats.active);
+    animateCount(document.getElementById('homeArchiveStat'), stats.archive);
+    animateCount(document.getElementById('homeCourtStat'), stats.court);
+    animateCount(document.getElementById('homeTotalPreview'), stats.total);
+    animateCount(document.getElementById('homeActivePreview'), stats.active);
+    animateCount(document.getElementById('homeArchivePreview'), stats.archive);
 
     const donut = document.getElementById('homeDonut');
     if(donut && stats.total){
@@ -274,6 +303,19 @@
 
     const previewList = document.getElementById('homePreviewList');
     previewList.innerHTML = state.cases.slice(0,3).map(item => `<article><strong>${escapeHtml(item.id)}</strong><span>${escapeHtml(item.article.split(' — ')[0])}</span></article>`).join('');
+
+    const sparkline = document.getElementById('homeSparkline');
+    if(sparkline){
+      const bucketCount = Math.min(8, state.cases.length) || 1;
+      const size = Math.ceil(state.cases.length / bucketCount) || 1;
+      const buckets = [];
+      for(let i = 0; i < state.cases.length; i += size) buckets.push(state.cases.slice(i, i + size).length);
+      const max = Math.max(1, ...buckets);
+      sparkline.innerHTML = buckets.map(count => `<div class="bar" data-height="${Math.round((count / max) * 100)}"></div>`).join('');
+      requestAnimationFrame(() => {
+        sparkline.querySelectorAll('.bar').forEach(bar => { bar.style.height = bar.dataset.height + '%'; });
+      });
+    }
   }
 
   function renderArticlePicker(){
@@ -368,10 +410,10 @@
       const shown = active.filter(c => filter === 'all' ? true : c.status === filter).slice().reverse();
       list.innerHTML = shown.length ? shown.map(item => renderRecord(item)).join('') : emptyState('Немає записів для цього фільтра.');
       resultInfo.textContent = `${shown.length} записів`;
-      statTotal.textContent = state.cases.length;
-      statNew.textContent = state.cases.filter(c => c.status === 'new').length;
-      statCourt.textContent = state.cases.filter(c => ['opened','court'].includes(c.status)).length;
-      statArchive.textContent = state.cases.filter(c => ['closed','rejected'].includes(c.status)).length;
+      animateCount(statTotal, state.cases.length);
+      animateCount(statNew, state.cases.filter(c => c.status === 'new').length);
+      animateCount(statCourt, state.cases.filter(c => ['opened','court'].includes(c.status)).length);
+      animateCount(statArchive, state.cases.filter(c => ['closed','rejected'].includes(c.status)).length);
     }
 
     draw();
@@ -487,6 +529,40 @@
     });
   }
 
+  function setupScrollReveal(){
+    const targets = document.querySelectorAll('.reveal');
+    if(!targets.length) return;
+    if(reduceMotion || !('IntersectionObserver' in window)){
+      targets.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.15});
+    targets.forEach(el => observer.observe(el));
+  }
+
+  function setupHeroTilt(){
+    const card = document.querySelector('.hero-card');
+    if(!card || reduceMotion) return;
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      card.classList.add('is-tilting');
+      card.style.transform = `perspective(900px) rotateX(${(-py * 6).toFixed(2)}deg) rotateY(${(px * 6).toFixed(2)}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.classList.remove('is-tilting');
+      card.style.transform = '';
+    });
+  }
+
   function renderAll(){
     renderHome();
     renderRegistry();
@@ -528,6 +604,8 @@
     }
     renderAll();
     renderArticlePicker();
+    setupScrollReveal();
+    setupHeroTilt();
   }
 
   init();
