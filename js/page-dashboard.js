@@ -16,13 +16,16 @@
   }
 
   let renderToken = 0;
+  let hasLoadedOnce = false;
 
   async function render(){
     const token = ++renderToken;
     const grid = document.getElementById('dashStatGrid');
-    grid.innerHTML = STAT_DEFS.map(() => '<div class="skeleton" style="height:76px"></div>').join('');
-    document.getElementById('dashRecentCases').innerHTML = skeletonRows(5);
-    document.getElementById('dashActivity').innerHTML = skeletonRows(4);
+    if(!hasLoadedOnce){
+      grid.innerHTML = STAT_DEFS.map(() => '<div class="skeleton" style="height:76px"></div>').join('');
+      document.getElementById('dashRecentCases').innerHTML = skeletonRows(5);
+      document.getElementById('dashActivity').innerHTML = skeletonRows(4);
+    }
 
     await data.loadCases();
     if(token !== renderToken) return;
@@ -72,6 +75,7 @@
         </div>`;
       }).join('');
     }
+    hasLoadedOnce = true;
   }
 
   data.onDataChange(render);
