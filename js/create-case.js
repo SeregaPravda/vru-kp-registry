@@ -69,9 +69,14 @@
   const submitBtn = overlay.querySelector('#createCaseSubmit');
 
   function open(){
-    if(!data.hasPermission('register')){
-      toast('Для реєстрації КП потрібно увійти в систему з відповідною роллю', 'error');
+    const user = data.getCurrentUser();
+    if(!user){
+      toast('Для реєстрації КП потрібно увійти в систему', 'error');
       if(window.KP.shell) window.KP.shell.openLogin();
+      return;
+    }
+    if(user.role === 'judge'){
+      toast('Суддя не реєструє нові КП', 'error');
       return;
     }
     overlay.classList.add('is-open');
